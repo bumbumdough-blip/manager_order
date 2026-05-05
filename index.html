@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>BBD — สั่งผลิต</title>
+<style>
+:root{
+  --bg:#100A14;--sf:#1A1020;--card:#221530;--bd:#5A3A7A;
+  --pu:#7A50B0;--pu-l:#B090E0;--pu-ll:#E8D8F8;--pu-s:#2A1840;
+  --cr:#F8F0FF;--mu:#8A7A9A;
+  --ok:#3A9C6A;--ok-s:#1A3028;
+  --wa:#C07820;--wa-s:#3A2800;
+  --da:#C04040;--da-s:#3A1010;
+  --gold:#C8A020;--gold-s:#3A2A00;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--cr);font-family:-apple-system,'Sarabun',sans-serif;font-size:14px;max-width:430px;margin:0 auto;padding-bottom:170px;min-height:100vh}
+input[type=number]{-moz-appearance:textfield}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+
+.hd{background:var(--sf);border-bottom:2px solid var(--bd);padding:10px 14px;position:sticky;top:0;z-index:100}
+.hd-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px}
+.hd-brand{font-size:15px;font-weight:700;color:var(--pu-l)}
+.hd-time{font-size:13px;color:var(--pu-ll);font-weight:700}
+.hd-sub{font-size:10px;color:var(--mu)}
+
+.store-wrap{padding:7px 12px;background:var(--sf);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px}
+.store-wrap span{font-size:11px;color:var(--mu);white-space:nowrap}
+.store-in{flex:1;padding:6px 10px;background:var(--card);border:1px solid var(--bd);border-radius:8px;color:var(--cr);font-size:12px;font-family:inherit}
+.store-in:focus{outline:none;border-color:var(--pu)}
+
+/* SUMMARY STRIP */
+.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--bd)}
+.sc{background:var(--sf);padding:8px 4px;text-align:center}
+.sv{font-size:17px;font-weight:700;line-height:1;margin-bottom:1px}
+.sl{font-size:9px;color:var(--mu)}
+
+/* SECTION */
+.sh{display:flex;justify-content:space-between;align-items:center;padding:11px 13px 5px;font-size:10px;font-weight:600;color:var(--mu);text-transform:uppercase;letter-spacing:.07em}
+.sb{font-size:10px;padding:1px 8px;border-radius:20px;font-weight:500}
+
+/* ORDER CARD */
+.ol{padding:0 8px;display:flex;flex-direction:column;gap:6px;margin-bottom:4px}
+.oc{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:10px}
+.oc.has-order{border-color:var(--pu)}
+.odot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.oi{flex:1;min-width:0}
+.on{font-size:13px;font-weight:600;color:var(--cr);margin-bottom:1px}
+.om{font-size:10px;color:var(--mu)}
+.order-in{width:64px;padding:7px 4px;background:var(--sf);border:1px solid var(--bd);border-radius:8px;color:var(--pu-ll);font-size:18px;font-weight:700;text-align:center;flex-shrink:0}
+.order-in:focus{outline:none;border-color:var(--pu)}
+.order-in.has-val{border-color:var(--pu);background:var(--pu-s)}
+
+/* DOUGH ORDER */
+.dough-section{padding:0 8px;display:flex;flex-direction:column;gap:6px}
+.dc{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 13px}
+.dc-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.dc-sticker{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;text-align:center;line-height:1.2}
+.dc-info{flex:1}
+.dc-name{font-size:13px;font-weight:600;color:var(--cr);margin-bottom:1px}
+.dc-sub{font-size:10px;color:var(--mu)}
+.dc-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dc-field label{font-size:10px;color:var(--mu);display:block;margin-bottom:4px}
+.dc-field input{width:100%;padding:7px;background:var(--sf);border:1px solid var(--bd);border-radius:8px;color:var(--pu-ll);font-size:16px;font-weight:700;text-align:center}
+.dc-field input:focus{outline:none;border-color:var(--pu)}
+.dc-field input.has-val{border-color:var(--pu);background:var(--pu-s)}
+
+/* NOTE */
+.note-wrap{margin:10px 8px 0}
+.note-card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 13px}
+.note-lbl{font-size:11px;font-weight:600;color:var(--pu-l);margin-bottom:6px}
+textarea{width:100%;padding:7px 10px;background:var(--sf);border:1px solid var(--bd);border-radius:8px;color:var(--cr);font-size:12px;resize:none;height:56px;font-family:inherit}
+textarea:focus{outline:none;border-color:var(--pu)}
+
+/* DATE SELECTOR */
+.date-wrap{margin:10px 8px 0;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 13px}
+.date-row{display:flex;align-items:center;gap:10px}
+.date-lbl{font-size:11px;color:var(--mu);flex:1}
+.date-pills{display:flex;gap:5px}
+.dp{padding:5px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--sf);font-size:11px;color:var(--mu);cursor:pointer;transition:all .12s}
+.dp.sel{background:var(--pu);color:#fff;border-color:var(--pu);font-weight:600}
+
+/* ACTIONS */
+.acts{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--sf);border-top:1px solid var(--bd);padding:9px 10px;display:flex;flex-direction:column;gap:6px;z-index:100}
+.btn{width:100%;padding:12px;border-radius:12px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .12s,transform .1s}
+.btn:active{opacity:.7;transform:scale(.98)}
+.btn-m{background:var(--pu);color:#fff;font-size:15px}
+.btn-r{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.btn-s{background:var(--card);color:var(--pu-l);border:1px solid var(--bd);font-size:12px}
+.btn-d{background:var(--card);color:var(--mu);border:1px solid var(--bd);font-size:12px}
+
+/* MODAL */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;align-items:flex-end}
+.ov.open{display:flex}
+.modal{background:var(--sf);border-radius:18px 18px 0 0;border-top:1px solid var(--bd);padding:16px 13px 32px;width:100%;max-height:88vh;overflow-y:auto}
+.mo-ttl{font-size:14px;font-weight:700;color:var(--pu-l);margin-bottom:2px}
+.mo-sub{font-size:11px;color:var(--mu);margin-bottom:11px}
+.rr{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--bd);font-size:12px}
+.rr:last-of-type{border-bottom:none}
+.rr-name{color:var(--cr)}
+.rr-val{font-weight:700;color:var(--pu-ll)}
+.sec-sep{font-size:11px;font-weight:600;color:var(--mu);padding:10px 0 5px;border-top:1px solid var(--bd);margin-top:6px}
+.sec-sep:first-child{border-top:none;margin-top:0;padding-top:0}
+.tot{display:flex;justify-content:space-between;padding:9px 0 0;font-size:13px;font-weight:700;border-top:1px solid var(--bd);margin-top:4px;color:var(--pu-ll)}
+.cbox{background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:8px;padding:9px 11px;font-size:10px;color:var(--mu);margin-top:9px;white-space:pre-wrap;font-family:monospace;line-height:1.7}
+.mo-cl{width:100%;margin-top:12px;padding:12px;border-radius:12px;border:none;background:var(--pu);color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+
+.toast{position:fixed;bottom:178px;left:50%;transform:translateX(-50%) translateY(50px);background:var(--pu);color:#fff;padding:8px 18px;border-radius:20px;font-size:12px;font-weight:600;transition:all .3s;z-index:999;white-space:nowrap;opacity:0}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+</style>
+</head>
+<body>
+
+<div class="hd">
+  <div class="hd-top">
+    <div class="hd-brand">BBD — สั่งผลิต</div>
+    <div class="hd-time" id="liveTime"></div>
+  </div>
+  <div class="hd-sub" id="liveDate"></div>
+</div>
+
+<div class="store-wrap">
+  <span>ผู้สั่ง</span>
+  <input class="store-in" id="managerName" type="text" placeholder="ชื่อผู้จัดการ / เจ้าของ" oninput="saveName()">
+</div>
+
+<!-- ประเภทออเดอร์ -->
+<div class="date-wrap">
+  <div class="date-row">
+    <div class="date-lbl">ประเภทออเดอร์</div>
+    <div class="date-pills" style="flex-wrap:wrap;gap:5px">
+      <div class="dp sel" data-d="today" onclick="setDay(this)">วันนี้</div>
+      <div class="dp" data-d="tomorrow" onclick="setDay(this)">พรุ่งนี้</div>
+      <div class="dp" data-d="special" onclick="setDay(this)">พิเศษ</div>
+    </div>
+  </div>
+  <div style="font-size:11px;color:var(--pu-l);margin-top:5px;font-weight:600" id="targetDateLabel"></div>
+  <!-- ช่องวันที่สำหรับออเดอร์พิเศษ -->
+  <div id="specialDateWrap" style="display:none;margin-top:8px">
+    <div style="font-size:11px;color:var(--mu);margin-bottom:4px">วันที่ต้องการใช้</div>
+    <input type="date" id="specialDate"
+      style="width:100%;padding:7px 10px;background:var(--card);border:1px solid var(--bd);border-radius:8px;color:var(--cr);font-size:13px;font-family:inherit"
+      onchange="updateTargetLabel()">
+    <div style="font-size:11px;color:var(--mu);margin-top:4px">หมายเหตุ / รายละเอียดออเดอร์พิเศษ</div>
+    <input type="text" id="specialNote" placeholder="เช่น งานเลี้ยงออฟฟิศ · ส่งคุณสมศรี · 12 ชิ้น gift box"
+      style="width:100%;padding:7px 10px;margin-top:4px;background:var(--card);border:1px solid var(--bd);border-radius:8px;color:var(--cr);font-size:12px;font-family:inherit">
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<div class="strip">
+  <div class="sc"><div class="sv" id="sumDonut" style="color:var(--pu-ll)">0</div><div class="sl">โดนัทรวม</div></div>
+  <div class="sc"><div class="sv" id="sumCore"  style="color:var(--ok)">0</div><div class="sl">เมนูประจำ</div></div>
+  <div class="sc"><div class="sv" id="sumSpec"  style="color:var(--wa)">0</div><div class="sl">เมนูหมุน+ดรอป</div></div>
+  <div class="sc"><div class="sv" id="sumDough" style="color:var(--gold)">0</div><div class="sl">แป้งดิบรวม</div></div>
+</div>
+
+<!-- เมนูประจำ -->
+<div class="sh">เมนูประจำ<span class="sb" style="background:var(--ok-s);color:var(--ok)">5 รส</span></div>
+<div class="ol" id="coreList"></div>
+
+<!-- เมนูหมุน -->
+<div class="sh">เมนูหมุน — สัปดาห์นี้<span class="sb" id="rotBadge" style="background:var(--wa-s);color:var(--wa)">—</span></div>
+<div class="ol" id="rotList"></div>
+
+<!-- วีคเอนด์ดรอป -->
+<div id="dropSec">
+  <div class="sh">วีคเอนด์ดรอป<span class="sb" id="dropBadge" style="background:var(--pu-s);color:var(--pu-l)">5 รส</span></div>
+  <div class="ol" id="dropList"></div>
+</div>
+
+<!-- แป้งดิบ -->
+<div class="sh" style="margin-top:6px">แป้งดิบ — สั่งทำ</div>
+<div style="padding:0 8px">
+  <div class="dc">
+    <div class="dc-row">
+      <div class="dc-field">
+        <label>แป้งกลม (ไส้)</label>
+        <input type="number" inputmode="numeric" id="dough_f" placeholder="0" oninput="onDough(this)">
+      </div>
+      <div class="dc-field">
+        <label>แป้งเจาะรู</label>
+        <input type="number" inputmode="numeric" id="dough_r" placeholder="0" oninput="onDough(this)">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- หมายเหตุ -->
+<div class="note-wrap">
+  <div class="note-card">
+    <div class="note-lbl">หมายเหตุเพิ่มเติม</div>
+    <textarea id="note" placeholder="เช่น เร่งด่วน · งานพิเศษ · ลดรสที่ขายช้า..."></textarea>
+  </div>
+</div>
+
+<!-- ACTIONS -->
+<div class="acts">
+  <button class="btn btn-m" onclick="openRpt()">ส่งคำสั่งผลิต</button>
+  <div class="btn-r">
+    <button class="btn btn-s" onclick="openRpt()">ดูรายงาน</button>
+    <button class="btn btn-d" onclick="doReset()">รีเซ็ต</button>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="ov" id="ov" onclick="closeOv(event)">
+  <div class="modal">
+    <div class="mo-ttl">คำสั่งผลิต BBD</div>
+    <div class="mo-sub" id="moSub"></div>
+    <div id="moRows"></div>
+    <div class="tot"><span>โดนัทรวม</span><span id="totDonut"></span></div>
+    <div class="cbox" id="cbox"></div>
+    <button class="mo-cl" onclick="closeOv()">ปิด</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var SHEETS_URL = "YOUR_WEB_APP_URL_HERE";
+
+var MENUS = {
+  core:[
+    {id:"honey",  name:"ฮันนี่ เกลซ",          price:45, color:"#C88020", type:"ring"},
+    {id:"berry",  name:"โบราเบอร์รี่",           price:79, color:"#C060A0", type:"filled"},
+    {id:"straw",  name:"สตรอว์เบอร์รี่ ครีมชีส", price:79, color:"#E04060", type:"filled"},
+    {id:"rot2",   name:"ช็อกโกแลต ริง",          price:55, color:"#7A5A30", type:"ring"},
+    {id:"shio",   name:"เมสซี่ ชิโอ บราวน์",     price:79, color:"#C0A040", type:"filled"},
+  ],
+  rotating:[
+    {id:"ganache",name:"กานาช โอ ช็อกโกแลต",    price:79, color:"#6B3A1F", type:"filled"},
+    {id:"rot1",   name:"พิ้งค์ เรนโบว์",         price:55, color:"#E080B0", type:"ring"},
+    {id:"rot3",   name:"ซุปเปอร์ เลมอน",         price:79, color:"#D0C020", type:"filled"},
+    {id:"rot4",   name:"พีนัทบัตเตอร์ อัลมอนด์", price:79, color:"#C09040", type:"filled"},
+    {id:"rot5",   name:"บีแอนด์ดับเบิลยู โอรีโอ", price:79, color:"#505050", type:"filled"},
+    {id:"rot6",   name:"พิสตาชิโอ เฟอิทีน",      price:79, color:"#6A9040", type:"filled"},
+    {id:"rot7",   name:"เอิร์ล เกรย์",           price:55, color:"#8080A0", type:"ring"},
+    {id:"rot8",   name:"เมเปิล แอนด์ เบคอน",     price:65, color:"#A05020", type:"filled"},
+    {id:"rot9",   name:"ลิ้นจี่ โรส",            price:79, color:"#E060A0", type:"filled"},
+    {id:"rot10",  name:"เอสเปรสโซ่ ริง",         price:55, color:"#3A2010", type:"ring"},
+    {id:"rot11",  name:"บิลเดอร์ ที เกลซ",       price:55, color:"#C09060", type:"ring"},
+    {id:"rot12",  name:"บลูเบอร์รี่ คอมโพท",     price:79, color:"#4040A0", type:"filled"},
+  ],
+  drop:[
+    {id:"drop1",  name:"โน.29 ชีส บรูเล่",       price:79, color:"#F0C040", type:"filled"},
+    {id:"drop2",  name:"เดอร์ตี้ คอฟฟี่",         price:79, color:"#5A3010", type:"filled"},
+    {id:"drop3",  name:"แบล็ค ทรัฟเฟิล",          price:89, color:"#2A2A2A", type:"filled"},
+    {id:"drop4",  name:"เวรี่ มัทชา",             price:79, color:"#507030", type:"filled"},
+    {id:"drop5",  name:"กาบา ครีม",               price:79, color:"#A0C080", type:"filled"},
+  ],
+};
+
+var orders = {};
+var targetDay = "today";
+
+function el(id){return document.getElementById(id);}
+function p2(x){return String(x).padStart(2,"0");}
+
+function tick(){
+  var n=new Date();
+  var days=["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัส","ศุกร์","เสาร์"];
+  var mo=["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+  el("liveDate").textContent="วัน"+days[n.getDay()]+" "+n.getDate()+" "+mo[n.getMonth()]+" "+(n.getFullYear()+543);
+  el("liveTime").textContent=p2(n.getHours())+":"+p2(n.getMinutes());
+  updateTargetLabel();
+}
+setInterval(tick,15000);
+
+function formatDate(d){
+  var days=["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัส","ศุกร์","เสาร์"];
+  var mo=["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+  return "วัน"+days[d.getDay()]+" "+d.getDate()+" "+mo[d.getMonth()]+" "+(d.getFullYear()+543);
+}
+
+function updateTargetLabel(){
+  var lbl=el("targetDateLabel");
+  if(!lbl) return;
+  if(targetDay==="today"){
+    lbl.textContent="วันนี้ (หน้าร้าน) — "+formatDate(new Date());
+  } else if(targetDay==="tomorrow"){
+    var d=new Date();d.setDate(d.getDate()+1);
+    lbl.textContent="พรุ่งนี้ (หน้าร้าน) — "+formatDate(d);
+  } else {
+    var sv=el("specialDate")?el("specialDate").value:"";
+    if(sv){
+      var d=new Date(sv+"T00:00:00");
+      lbl.textContent="ออเดอร์พิเศษ — "+formatDate(d);
+    } else {
+      lbl.textContent="ออเดอร์พิเศษ — กรุณาเลือกวันที่";
+    }
+  }
+}
+
+function setDay(el_){
+  document.querySelectorAll(".dp").forEach(function(e){e.classList.remove("sel");});
+  el_.classList.add("sel");
+  targetDay=el_.dataset.d;
+  var sw=el("specialDateWrap");
+  if(sw) sw.style.display=targetDay==="special"?"":"none";
+  updateTargetLabel();
+}
+
+function saveName(){
+  localStorage.setItem("bbd_manager",el("managerName").value);
+}
+function getName(){return localStorage.getItem("bbd_manager")||"ไม่ระบุ";}
+
+function allMenus(){return MENUS.core.concat(MENUS.rotating).concat(MENUS.drop);}
+
+function renderAll(){
+  renderList("coreList",MENUS.core);
+  renderList("rotList",MENUS.rotating);
+  renderList("dropList",MENUS.drop);
+  el("rotBadge").textContent=MENUS.rotating.length+" รส";
+  el("dropBadge").textContent=MENUS.drop.length+" รส";
+}
+
+function renderList(listId,items){
+  var list=el(listId);if(!list)return;
+  list.innerHTML="";
+  items.forEach(function(item){
+    var val=orders[item.id]||"";
+    var c=document.createElement("div");
+    c.className="oc"+(val&&val!=="0"?" has-order":"");
+    c.id="oc_"+item.id;
+    c.innerHTML=
+      '<div class="odot" style="background:'+item.color+'"></div>'+
+      '<div class="oi">'+
+        '<div class="on">'+item.name+'</div>'+
+        '<div class="om">฿'+item.price+' · '+item.type+'</div>'+
+      '</div>'+
+      '<input class="order-in'+(val&&val!=="0"?" has-val":"")+'" id="oi_'+item.id+'" type="number" inputmode="numeric"'+
+        ' value="'+val+'" placeholder="0" oninput="onOrder(\''+item.id+'\',this)">';
+    list.appendChild(c);
+  });
+}
+
+function onOrder(id,inp){
+  var v=inp.value;
+  orders[id]=v;
+  var card=el("oc_"+id);
+  var hasVal=v&&parseInt(v)>0;
+  if(card) card.className="oc"+(hasVal?" has-order":"");
+  inp.className="order-in"+(hasVal?" has-val":"");
+  calcSummary();
+}
+
+function onDough(inp){
+  var hasVal=inp.value&&parseInt(inp.value)>0;
+  inp.className=hasVal?"has-val":"";
+  calcSummary();
+}
+
+function calcSummary(){
+  var total=0,core=0,spec=0;
+  MENUS.core.forEach(function(item){var v=parseInt(orders[item.id])||0;core+=v;total+=v;});
+  MENUS.rotating.concat(MENUS.drop).forEach(function(item){var v=parseInt(orders[item.id])||0;spec+=v;total+=v;});
+  var dough=0;
+  ["dough_f","dough_r"].forEach(function(k){
+    dough+=parseInt(el(k)?el(k).value:0)||0;
+  });
+  el("sumDonut").textContent=total;
+  el("sumCore").textContent=core;
+  el("sumSpec").textContent=spec;
+  el("sumDough").textContent=dough;
+}
+
+function openRpt(){
+  var targetStr="";
+  if(targetDay==="today"){
+    targetStr="วันนี้ (หน้าร้าน) — "+formatDate(new Date());
+  } else if(targetDay==="tomorrow"){
+    var _d=new Date();_d.setDate(_d.getDate()+1);
+    targetStr="พรุ่งนี้ (หน้าร้าน) — "+formatDate(_d);
+  } else {
+    var sv=el("specialDate")?el("specialDate").value:"";
+    if(sv){ var _d=new Date(sv+"T00:00:00");targetStr="ออเดอร์พิเศษ — "+formatDate(_d);}
+    else targetStr="ออเดอร์พิเศษ — (ยังไม่ได้ระบุวัน)";
+    var sn=el("specialNote")?el("specialNote").value:"";
+    if(sn) targetStr+=" · "+sn;
+  }
+
+  var name=getName();
+  var now=el("liveDate").textContent+" · "+el("liveTime").textContent;
+  el("moSub").textContent=name+" · สำหรับ "+targetStr;
+
+  var rows="",txt="",total=0;
+  txt="คำสั่งผลิต BBD\n";
+  txt+="ผู้สั่ง: "+name+"\n";
+  txt+="สั่งเมื่อ: "+now+"\n";
+  txt+="ผลิตสำหรับ: "+targetStr+"\n";
+  txt+="─────────────────\n";
+
+  var sections=[
+    {lbl:"เมนูประจำ",items:MENUS.core},
+    {lbl:"เมนูหมุน",items:MENUS.rotating},
+    {lbl:"วีคเอนด์ดรอป",items:MENUS.drop},
+  ];
+
+  sections.forEach(function(sec){
+    var hasAny=false;
+    sec.items.forEach(function(item){
+      if(parseInt(orders[item.id])>0) hasAny=true;
+    });
+    if(!hasAny) return;
+
+    rows+='<div class="sec-sep">'+sec.lbl+'</div>';
+    txt+="[ "+sec.lbl+" ]\n";
+    sec.items.forEach(function(item){
+      var v=parseInt(orders[item.id])||0;
+      if(v>0){
+        total+=v;
+        rows+='<div class="rr"><span class="rr-name">'+item.name+'</span><span class="rr-val">'+v+' ชิ้น</span></div>';
+        txt+="- "+item.name+": "+v+" ชิ้น\n";
+      }
+    });
+  });
+
+  // dough
+  var df=el("dough_f")?parseInt(el("dough_f").value)||0:0;
+  var dr=el("dough_r")?parseInt(el("dough_r").value)||0:0;
+  if(df>0||dr>0){
+    rows+='<div class="sec-sep">แป้งดิบ</div>';
+    rows+='<div class="rr"><span class="rr-name">แป้งกลม (ไส้)</span><span class="rr-val">'+df+' ก้อน</span></div>';
+    rows+='<div class="rr"><span class="rr-name">แป้งเจาะรู</span><span class="rr-val">'+dr+' ก้อน</span></div>';
+    txt+="─────────────────\n[ แป้งดิบ ]\n";
+    txt+="- แป้งกลม (ไส้): "+df+" ก้อน\n";
+    txt+="- แป้งเจาะรู: "+dr+" ก้อน\n";
+  }
+
+  var note=el("note").value;
+  if(note){
+    rows+='<div class="sec-sep">หมายเหตุ</div>';
+    rows+='<div class="rr"><span class="rr-name" style="color:var(--wa)">'+note+'</span></div>';
+    txt+="─────────────────\nหมายเหตุ: "+note+"\n";
+  }
+
+  el("moRows").innerHTML=rows||'<div style="padding:10px 0;font-size:12px;color:var(--mu)">ยังไม่ได้กรอกจำนวน</div>';
+  el("totDonut").textContent=total+" ชิ้น";
+  el("cbox").textContent=txt;
+  el("ov").classList.add("open");
+
+  if(navigator.clipboard) navigator.clipboard.writeText(txt).catch(function(){});
+
+  if(SHEETS_URL&&!SHEETS_URL.includes("YOUR_")){
+    fetch(SHEETS_URL,{method:"POST",mode:"no-cors",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({source:"manager",manager:name,targetDate:targetStr,
+        orders:orders,dough:{filled:df,ring:dr},
+        note:note,totalDonut:total})
+    }).catch(function(){});
+  }
+}
+
+function closeOv(e){if(!e||e.target===el("ov"))el("ov").classList.remove("open");}
+
+function doReset(){
+  if(confirm("รีเซ็ตทุกจำนวน?")){
+    orders={};
+    renderAll();
+    ["dough_f","dough_r"].forEach(function(k){
+      var inp=el(k);if(inp){inp.value="";inp.className="";}
+    });
+    el("note").value="";
+    calcSummary();
+    toast("รีเซ็ตเรียบร้อย");
+  }
+}
+
+function toast(msg){
+  var t=el("toast");t.textContent=msg;t.classList.add("show");
+  setTimeout(function(){t.classList.remove("show");},2500);
+}
+
+// INIT
+tick();
+renderAll();
+var _mn=localStorage.getItem("bbd_manager")||"";
+if(_mn&&el("managerName")) el("managerName").value=_mn;
+// set default date for special to today
+var _today=new Date();
+var _dd=_today.getFullYear()+"-"+p2(_today.getMonth()+1)+"-"+p2(_today.getDate());
+if(el("specialDate")) el("specialDate").value=_dd;
+updateTargetLabel();
+</script>
+</body>
+</html>

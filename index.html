@@ -177,11 +177,11 @@ textarea:focus{outline:none;border-color:var(--pu)}
     <div class="dc-row">
       <div class="dc-field">
         <label>แป้งกลม (ไส้) — สูตร</label>
-        <input type="number" inputmode="decimal" step="0.5" id="dough_f" placeholder="0" oninput="onDough(this)">
+        <input type="number" inputmode="decimal" step="any" id="dough_f" placeholder="เช่น 0.5" oninput="onDough(this)">
       </div>
       <div class="dc-field">
         <label>แป้งเจาะรู — สูตร</label>
-        <input type="number" inputmode="decimal" step="0.5" id="dough_r" placeholder="0" oninput="onDough(this)">
+        <input type="number" inputmode="decimal" step="any" id="dough_r" placeholder="เช่น 0.5" oninput="onDough(this)">
       </div>
     </div>
     <div style="font-size:10px;color:var(--mu);margin-top:6px;line-height:1.6">ใส่ทศนิยมได้ เช่น 0.5 · 1.5 · 2.5 สูตร</div>
@@ -349,7 +349,7 @@ function onOrder(id,inp){
 }
 
 function onDough(inp){
-  var hasVal=inp.value&&parseFloat(inp.value)>0;
+  var hasVal=inp.value!==""&&Number(inp.value)>0;
   inp.className=hasVal?"has-val":"";
   calcSummary();
 }
@@ -360,7 +360,7 @@ function calcSummary(){
   MENUS.rotating.concat(MENUS.drop).forEach(function(item){var v=parseInt(orders[item.id])||0;spec+=v;total+=v;});
   var dough=0;
   ["dough_f","dough_r"].forEach(function(k){
-    dough+=parseFloat(el(k)?el(k).value:0)||0;
+    var inp=el(k);if(inp&&inp.value!=="")dough+=Number(inp.value)||0;
   });
   el("sumDonut").textContent=total;
   el("sumCore").textContent=core;
@@ -420,8 +420,8 @@ function openRpt(){
   });
 
   // dough
-  var df=el("dough_f")?parseFloat(el("dough_f").value)||0:0;
-  var dr=el("dough_r")?parseFloat(el("dough_r").value)||0:0;
+  var df=el("dough_f")&&el("dough_f").value!==""?Number(el("dough_f").value)||0:0;
+  var dr=el("dough_r")&&el("dough_r").value!==""?Number(el("dough_r").value)||0:0;
   if(df>0||dr>0){
     rows+='<div class="sec-sep">แป้งดิบ</div>';
     rows+='<div class="rr"><span class="rr-name">แป้งกลม (ไส้)</span><span class="rr-val">'+df+' สูตร</span></div>';

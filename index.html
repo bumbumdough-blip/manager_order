@@ -220,36 +220,45 @@ textarea:focus{outline:none;border-color:var(--pu)}
 <div class="toast" id="toast"></div>
 
 <script>
-var SHEETS_URL = "https://script.google.com/macros/s/AKfycbzgh9CP7uq2veEIFDjdvty-CQQiUeqOkmYX9jz4R7X7FP6bLfntOUBbVGYtQwpt4RII/exec";
+var SHEETS_URL = "https://script.google.com/macros/s/AKfycbxNqxziVIkFBT8_nj8fWhSk3rY_dUUOnItQ7SSaQw-3YhF8oikeNMnAcIX4OZsgR4M/exec";
 
 var MENUS = {
   core:[
-    {id:"honey",  name:"ฮันนี่ เกลซ",          price:45, color:"#C88020", type:"ring"},
-    {id:"berry",  name:"โบราเบอร์รี่",           price:79, color:"#C060A0", type:"filled"},
-    {id:"straw",  name:"สตรอว์เบอร์รี่ ครีมชีส", price:79, color:"#E04060", type:"filled"},
-    {id:"rot2",   name:"ช็อกโกแลต ริง",          price:55, color:"#7A5A30", type:"ring"},
-    {id:"shio",   name:"เมสซี่ ชิโอ บราวน์",     price:79, color:"#C0A040", type:"filled"},
+    {id:"honey",name:"ฮันนี่ เกลซ",price:45,color:"#C88020",type:"ring"},
+    {id:"berry",name:"โบราเบอร์รี่",price:79,color:"#C060A0",type:"filled"},
+    {id:"straw",name:"สตรอว์เบอร์รี่ ครีมชีส",price:79,color:"#E04060",type:"filled"},
+    {id:"rot2",name:"ช็อกโกแลต ริง",price:55,color:"#7A5A30",type:"ring"},
+    {id:"shio",name:"เมสซี่ ชิโอ บราวน์",price:79,color:"#C0A040",type:"filled"},
   ],
   rotating:[
-    {id:"ganache",name:"กานาช โอ ช็อกโกแลต",    price:79, color:"#6B3A1F", type:"filled"},
-    {id:"rot1",   name:"พิ้งค์ เรนโบว์",         price:55, color:"#E080B0", type:"ring"},
-    {id:"rot3",   name:"ซุปเปอร์ เลมอน",         price:79, color:"#D0C020", type:"filled"},
-    {id:"rot4",   name:"พีนัทบัตเตอร์ อัลมอนด์", price:79, color:"#C09040", type:"filled"},
-    {id:"rot5",   name:"บีแอนด์ดับเบิลยู โอรีโอ", price:79, color:"#505050", type:"filled"},
-    {id:"rot6",   name:"พิสตาชิโอ เฟอิทีน",      price:79, color:"#6A9040", type:"filled"},
-    {id:"rot7",   name:"เอิร์ล เกรย์",           price:55, color:"#8080A0", type:"ring"},
-    {id:"rot8",   name:"เมเปิล แอนด์ เบคอน",     price:65, color:"#A05020", type:"filled"},
-    {id:"rot9",   name:"ลิ้นจี่ โรส",            price:79, color:"#E060A0", type:"filled"},
-    {id:"rot10",  name:"เอสเปรสโซ่ ริง",         price:55, color:"#3A2010", type:"ring"},
-    {id:"rot11",  name:"บิลเดอร์ ที เกลซ",       price:55, color:"#C09060", type:"ring"},
-    {id:"rot12",  name:"บลูเบอร์รี่ คอมโพท",     price:79, color:"#4040A0", type:"filled"},
+    {id:"ganache",name:"กานาช โอ ช็อกโกแลต",price:79,color:"#6B3A1F",type:"filled"},
+    {id:"rot1",name:"พิ้งค์ เรนโบว์",price:55,color:"#E080B0",type:"ring"},
+    {id:"rot3",name:"ซุปเปอร์ เลมอน",price:79,color:"#D0C020",type:"filled"},
+    {id:"rot4",name:"พีนัทบัตเตอร์ อัลมอนด์",price:79,color:"#C09040",type:"filled"},
+    {id:"rot5",name:"บีแอนด์ดับเบิลยู โอรีโอ",price:79,color:"#505050",type:"filled"},
+    {id:"rot6",name:"พิสตาชิโอ เฟอิทีน",price:79,color:"#6A9040",type:"filled"},
+    {id:"rot7",name:"เอิร์ล เกรย์",price:55,color:"#8080A0",type:"ring"},
+    {id:"rot8",name:"เมเปิล แอนด์ เบคอน",price:65,color:"#A05020",type:"filled"},
+    {id:"rot9",name:"ลิ้นจี่ โรส",price:79,color:"#E060A0",type:"filled"},
+    {id:"rot10",name:"เอสเปรสโซ่ ริง",price:55,color:"#3A2010",type:"ring"},
+    {id:"rot11",name:"บิลเดอร์ ที เกลซ",price:55,color:"#C09060",type:"ring"},
+    {id:"rot12",name:"บลูเบอร์รี่ คอมโพท",price:79,color:"#4040A0",type:"filled"},
+    {id:"sp1",name:"สเปเชียล 1",price:79,color:"#D4507A",type:"filled"},
+    {id:"sp2",name:"สเปเชียล 2",price:79,color:"#50A4D4",type:"filled"},
+    {id:"sp3",name:"สเปเชียล 3",price:79,color:"#7AD450",type:"filled"},
+    {id:"sp4",name:"สเปเชียล 4",price:79,color:"#D4A850",type:"filled"},
+    {id:"sp5",name:"สเปเชียล 5",price:79,color:"#9050D4",type:"filled"},
+    {id:"sp6",name:"สเปเชียล 6",price:79,color:"#50D4C8",type:"filled"},
+    {id:"sp7",name:"สเปเชียล 7",price:79,color:"#D47850",type:"filled"},
+    {id:"sp8",name:"สเปเชียล 8",price:79,color:"#D45050",type:"filled"},
+    {id:"sp9",name:"สเปเชียล 9",price:79,color:"#8090C0",type:"filled"},
   ],
   drop:[
-    {id:"drop1",  name:"โน.29 ชีส บรูเล่",       price:79, color:"#F0C040", type:"filled"},
-    {id:"drop2",  name:"เดอร์ตี้ คอฟฟี่",         price:79, color:"#5A3010", type:"filled"},
-    {id:"drop3",  name:"แบล็ค ทรัฟเฟิล",          price:89, color:"#2A2A2A", type:"filled"},
-    {id:"drop4",  name:"เวรี่ มัทชา",             price:79, color:"#507030", type:"filled"},
-    {id:"drop5",  name:"กาบา ครีม",               price:79, color:"#A0C080", type:"filled"},
+    {id:"drop1",name:"โน.29 ชีส บรูเล่",price:79,color:"#F0C040",type:"filled"},
+    {id:"drop2",name:"เดอร์ตี้ คอฟฟี่",price:79,color:"#5A3010",type:"filled"},
+    {id:"drop3",name:"แบล็ค ทรัฟเฟิล",price:89,color:"#2A2A2A",type:"filled"},
+    {id:"drop4",name:"เวรี่ มัทชา",price:79,color:"#507030",type:"filled"},
+    {id:"drop5",name:"กาบา ครีม",price:79,color:"#A0C080",type:"filled"},
   ],
 };
 

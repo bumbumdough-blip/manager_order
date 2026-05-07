@@ -124,6 +124,12 @@ textarea:focus{outline:none;border-color:var(--pu)}
   <span>ผู้สั่ง</span>
   <input class="store-in" id="managerName" type="text" placeholder="ชื่อผู้จัดการ / เจ้าของ" oninput="saveName()">
 </div>
+<div style="padding:7px 12px;background:var(--sf);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px">
+  <span style="font-size:11px;color:var(--mu);white-space:nowrap">รหัส PIN</span>
+  <input id="managerPin" type="password" inputmode="numeric" maxlength="4" placeholder="••••"
+    style="width:80px;padding:6px 10px;background:var(--card);border:1px solid var(--bd);border-radius:8px;color:var(--cr);font-size:16px;font-weight:700;text-align:center;letter-spacing:4px;font-family:inherit">
+  <span id="managerPinStatus" style="font-size:11px;color:var(--mu)"></span>
+</div>
 
 <!-- ประเภทออเดอร์ -->
 <div class="date-wrap">
@@ -220,7 +226,7 @@ textarea:focus{outline:none;border-color:var(--pu)}
 <div class="toast" id="toast"></div>
 
 <script>
-var SHEETS_URL = "https://script.google.com/macros/s/AKfycbwfpMz6QHsm_mIMxgSyppgte0Qg0YMx7Fr16VZ6SlHLC6GL-x1XScRSZBfmqBjzPfhs/exec";
+var SHEETS_URL = "https://script.google.com/macros/s/AKfycbwBRf_z6W1Gm8Q5Ro-15YBVZ2ZUgczCr7fjSJsjKX2mx0brkvGapDmjBRSVkTndV5ix/exec";
 
 var MENUS = {
   core:[
@@ -377,7 +383,18 @@ function calcSummary(){
   el("sumDough").textContent=Math.round(dough*10)/10;
 }
 
+var CORRECT_PIN = "8313";
+
 function openRpt(){
+  var pin=el("managerPin")?el("managerPin").value:"";
+  if(pin!==CORRECT_PIN){
+    var ps=el("managerPinStatus");
+    if(ps){ps.textContent="รหัสไม่ถูกต้อง";ps.style.color="#C04040";}
+    toast("กรุณาใส่รหัส PIN ให้ถูกต้อง");
+    return;
+  }
+  var ps=el("managerPinStatus");if(ps){ps.textContent="✓";ps.style.color="#7060C0";}
+  // original openRpt continues below
   var targetStr="";
   if(targetDay==="today"){
     targetStr="วันนี้ (หน้าร้าน) — "+formatDate(new Date());
@@ -457,7 +474,7 @@ function openRpt(){
   if(SHEETS_URL&&!SHEETS_URL.includes("YOUR_")){
     fetch(SHEETS_URL,{method:"POST",mode:"no-cors",
       headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({source:"manager",manager:name,targetDate:targetStr,
+      body:JSON.stringify({key:"8313",source:"manager",manager:name,targetDate:targetStr,
         orders:orders,dough:{filled:df,ring:dr},
         note:note,totalDonut:total})
     }).catch(function(){});
